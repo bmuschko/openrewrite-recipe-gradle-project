@@ -1,0 +1,31 @@
+plugins {
+    id("java")
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation(platform("org.openrewrite.recipe:rewrite-recipe-bom:latest.release"))
+    implementation("org.openrewrite:rewrite-gradle")
+    compileOnly("org.projectlombok:lombok:1.18.36")
+    annotationProcessor("org.projectlombok:lombok:1.18.36")
+
+    testImplementation("org.openrewrite:rewrite-test")
+    testImplementation(platform("org.junit:junit-bom:5.11.3"))
+    testImplementation("org.junit.jupiter:junit-jupiter-api")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+    testImplementation("org.assertj:assertj-core:3.26.3")
+    testRuntimeOnly("org.codehaus.groovy:groovy:3.0.23")
+}
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}

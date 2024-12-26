@@ -1,0 +1,6 @@
+type: specs.openrewrite.org/v1beta/recipe
+name: org.bmuschko.GradleExample
+displayName: Generates a Gradle project
+recipeList:
+  - com.bmuschko.GenerateGradleProject
+  - org.openrewrite.gradle.UpdateGradleWrapper
