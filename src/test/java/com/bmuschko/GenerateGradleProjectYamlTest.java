@@ -1,10 +1,8 @@
 package com.bmuschko;
 
-import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.Test;
 import org.openrewrite.properties.tree.Properties;
 import org.openrewrite.remote.Remote;
-import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 import org.openrewrite.text.PlainText;
 
@@ -12,21 +10,24 @@ import static com.bmuschko.RecipeRunUtil.result;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.openrewrite.gradle.Assertions.buildGradle;
 import static org.openrewrite.gradle.util.GradleWrapper.*;
-import static org.openrewrite.java.Assertions.java;
 
-public class GenerateGradleProjectWithWrapperTest implements RewriteTest {
-    @Override
-    public void defaults(RecipeSpec spec) {
-        spec.recipe(new GenerateGradleProject());
-    }
-
+public class GenerateGradleProjectYamlTest implements RewriteTest {
     @Test
-    void doesNotGenerateGradleBuildFileForExistingGradleProject() {
+    void canGenerateFromYamlWithoutWrapper() {
         rewriteRun(
-                recipeSpec -> recipeSpec.afterRecipe(run -> {
-                    AssertionsForClassTypes.assertThat(run.getChangeset().size()).isEqualTo(0);
-                }),
+                spec -> spec.recipeFromYaml(
+                        """
+                        type: specs.openrewrite.org/v1beta/recipe
+                        name: com.bmuschko.GenerateGradleProjectWithoutWrapper
+                        displayName: Generate Gradle project without wrapper
+                        description: Generate a Gradle project without a wrapper.
+                        recipeList:
+                          - com.bmuschko.GenerateGradleProject:
+                              addWrapper: false
+                        """, "com.bmuschko.GenerateGradleProjectWithoutWrapper"
+                ),
                 buildGradle(
+                        null,
                         """
                         plugins {
                             id 'java'
@@ -37,9 +38,18 @@ public class GenerateGradleProjectWithWrapperTest implements RewriteTest {
     }
 
     @Test
-    void generatesGradleBuildFileForNonExistingGradleProject() {
+    void canGenerateFromYamlWithWrapper() {
         rewriteRun(
-                recipeSpec -> recipeSpec.afterRecipe(run -> {
+                spec -> spec.recipeFromYaml(
+                        """
+                        type: specs.openrewrite.org/v1beta/recipe
+                        name: com.bmuschko.GenerateGradleProjectWithWrapper
+                        displayName: Generate Gradle project without wrapper
+                        description: Generate a Gradle project without a wrapper.
+                        recipeList:
+                          - com.bmuschko.GenerateGradleProject
+                        """, "com.bmuschko.GenerateGradleProjectWithWrapper"
+                ).afterRecipe(run -> {
                     assertThat(run.getChangeset().size()).isEqualTo(5);
 
                     var gradleSh = result(run, PlainText.class, "gradlew");
@@ -61,18 +71,6 @@ public class GenerateGradleProjectWithWrapperTest implements RewriteTest {
                             id 'java'
                         }
                         """
-                ),
-                java(
-                        """
-                        package com.bmuschko;
-                        
-                        public class HelloWorld {
-                            public static void main(String[] args) {
-                                System.out.println("Hello, World!");
-                            }
-                        }
-                        """,
-                        spec -> spec.path("src/main/java/com/bmuschko/HelloWorld.java")
                 )
         );
     }

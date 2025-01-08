@@ -24,6 +24,8 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testImplementation("org.assertj:assertj-core:3.26.3")
     testRuntimeOnly("org.codehaus.groovy:groovy:3.0.23")
+    testImplementation("org.openrewrite:rewrite-properties")
+    testRuntimeOnly("org.openrewrite:rewrite-java-21")
 }
 
 tasks.withType(Test).configureEach {

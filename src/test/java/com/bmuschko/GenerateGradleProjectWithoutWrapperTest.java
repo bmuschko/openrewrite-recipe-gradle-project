@@ -7,10 +7,10 @@ import org.openrewrite.test.RewriteTest;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.openrewrite.gradle.Assertions.buildGradle;
 
-public class GenerateGradleProjectTest implements RewriteTest {
+public class GenerateGradleProjectWithoutWrapperTest implements RewriteTest {
     @Override
     public void defaults(RecipeSpec spec) {
-        spec.recipe(new GenerateGradleProject());
+        spec.recipe(new GenerateGradleProject(false));
     }
 
     @Test
