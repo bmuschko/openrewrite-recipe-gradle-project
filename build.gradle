@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    implementation(platform("org.openrewrite:rewrite-bom:8.41.0"))
+    implementation(platform("org.openrewrite:rewrite-bom:8.42.4"))
     implementation("org.openrewrite:rewrite-gradle")
     compileOnly("org.projectlombok:lombok:1.18.36")
     annotationProcessor("org.projectlombok:lombok:1.18.36")
@@ -23,7 +23,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testImplementation("org.assertj:assertj-core:3.26.3")
-    testRuntimeOnly("org.codehaus.groovy:groovy:3.0.23")
+    testRuntimeOnly("org.apache.groovy:groovy:4.0.24")
     testImplementation("org.openrewrite:rewrite-properties")
     testRuntimeOnly("org.openrewrite:rewrite-java-21")
 }
