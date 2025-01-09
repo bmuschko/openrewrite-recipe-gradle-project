@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Value;
 import lombok.experimental.FieldDefaults;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.Parser;
 import org.openrewrite.ScanningRecipe;
@@ -17,9 +18,11 @@ import org.openrewrite.gradle.GradleParser;
 
 import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
+import static java.util.Objects.requireNonNull;
 
 @Value
 @EqualsAndHashCode(callSuper = false)
@@ -35,6 +38,7 @@ public class GenerateGradleProjectFailure extends ScanningRecipe<GenerateGradleP
     }
 
     public static class Accumulator {
+        boolean gradleProjectFound;
     }
 
     @Override
@@ -45,8 +49,15 @@ public class GenerateGradleProjectFailure extends ScanningRecipe<GenerateGradleP
     @Override
     public TreeVisitor<?, ExecutionContext> getScanner(GenerateGradleProject.Accumulator acc) {
         return new TreeVisitor<>() {
-            @Override
-            public Tree visit(@NonNull Tree tree, ExecutionContext ctx) {
+            public @Nullable Tree preVisit(@NonNull Tree tree, ExecutionContext ctx) {
+                stopAfterPreVisit();
+                SourceFile sourceFile = (SourceFile) requireNonNull(tree);
+
+                if (sourceFile.getSourcePath().getFileName().toString().equals("build.gradle") ||
+                        sourceFile.getSourcePath().getFileName().toString().equals("build.gradle.kts")) {
+                    acc.gradleProjectFound = true;
+                }
+
                 return tree;
             }
         };
@@ -54,6 +65,10 @@ public class GenerateGradleProjectFailure extends ScanningRecipe<GenerateGradleP
 
     @Override
     public Collection<? extends SourceFile> generate(GenerateGradleProject.Accumulator acc, ExecutionContext ctx) {
+        if (acc.gradleProjectFound) {
+            return Collections.emptyList();
+        }
+
         SourceFile buildFile = generateBuildFile(ctx);
         return List.of(buildFile);
     }
