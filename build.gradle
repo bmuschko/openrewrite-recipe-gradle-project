@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    implementation(platform("org.openrewrite:rewrite-bom:8.42.4"))
+    implementation(platform("org.openrewrite:rewrite-bom:8.43.1"))
     implementation("org.openrewrite:rewrite-gradle")
     compileOnly("org.projectlombok:lombok:1.18.36")
     annotationProcessor("org.projectlombok:lombok:1.18.36")
