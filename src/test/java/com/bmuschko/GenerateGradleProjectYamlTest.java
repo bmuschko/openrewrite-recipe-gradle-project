@@ -63,6 +63,7 @@ public class GenerateGradleProjectYamlTest implements RewriteTest {
 
                     var gradleWrapperJar = result(run, Remote.class, "gradle-wrapper.jar");
                     assertThat(gradleWrapperJar.getSourcePath()).isEqualTo(WRAPPER_JAR_LOCATION);
+                    assertThat(gradleWrapperJar.getSourcePath().toFile().length()).isGreaterThan(0);
                 }),
                 buildGradle(
                         null,
